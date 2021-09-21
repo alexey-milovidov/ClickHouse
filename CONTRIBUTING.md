@@ -12,10 +12,6 @@ If you want to contribute to documentation, read the [Contributing to ClickHouse
 
 ## Legal Info
 
-In order for us (YANDEX LLC) to accept patches and other contributions from you, you may adopt our Yandex Contributor License Agreement (the "**CLA**"). The current version of the CLA you may find here:
-1) https://yandex.ru/legal/cla/?lang=en (in English) and
-2) https://yandex.ru/legal/cla/?lang=ru (in Russian).
-
 By adopting the CLA, you state the following:
 
 * You obviously wish and are willingly licensing your contributions to us for our open source projects under the terms of the CLA,
