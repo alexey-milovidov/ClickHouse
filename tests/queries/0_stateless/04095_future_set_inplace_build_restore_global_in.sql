@@ -9,7 +9,9 @@
 -- place. The failpoint skips `Set::finishInsert` once, so that build stops without creating the set.
 -- The deferred build must then create the set from the preserved subquery plan, and the temporary
 -- external table sent to the remote shard must still contain the subquery result: an empty set or
--- table would make `count()` lower than expected.
+-- table would make `count()` lower than expected. The `enabled` column of `system.fail_points`
+-- flipping from `1` to `0` proves that the in-place build was really faulted, so the test cannot
+-- pass vacuously on the ordinary execution path.
 
 DROP TABLE IF EXISTS 04095_data;
 DROP TABLE IF EXISTS 04095_keys;
@@ -35,9 +37,11 @@ INSERT INTO 04095_keys VALUES ('a'), ('x');
 SET use_index_for_in_with_subqueries = 1;
 
 SYSTEM ENABLE FAILPOINT prepared_sets_build_ordered_set_inplace_fail;
+SELECT enabled FROM system.fail_points WHERE name = 'prepared_sets_build_ordered_set_inplace_fail';
 SELECT count() == 2
 FROM remote('127.0.0.{1,2}', currentDatabase(), '04095_data')
 WHERE key GLOBAL IN (SELECT key FROM 04095_keys);
+SELECT enabled FROM system.fail_points WHERE name = 'prepared_sets_build_ordered_set_inplace_fail';
 SYSTEM DISABLE FAILPOINT prepared_sets_build_ordered_set_inplace_fail;
 
 DROP TABLE 04095_keys;
